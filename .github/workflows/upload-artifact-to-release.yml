@@ -29,11 +29,42 @@ jobs:
       - name: Build App
         run: |
             flutter build macos --release
-            zip picker_wheel_macos_intel.zip ./build/macos/Build/Products/Release/picker_wheel.app
+            mkdir picker_wheel.app
+            cp -a build/macos/Build/Products/Release/picker_wheel.app/. picker_wheel.app
+            zip -r picker_wheel_macos_intel.zip picker_wheel.app
       - name: Upload artifact
         uses: softprops/action-gh-release@v1
         with:
           files: picker_wheel_macos_intel.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.CI_CD }}
+  build-windows:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: stable
+          version: '3.35.7'
+          cache: true
+          cache-sdk: true
+      - name: Install dependencies
+        run: flutter pub get
+      # - name: Run tests (optional)
+      #   run: flutter test
+      - name: Build App
+        run: |
+            flutter build windows --release
+            mkdir picker_wheel_windows
+            xcopy /E /I /Y "build\windows\x64\runner\Release" picker_wheel_windows
+            powershell Compress-Archive -Path picker_wheel_windows -DestinationPath picker_wheel_windows.zip      - name: Upload artifact
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: picker_wheel_windows.zip 
         env:
           GITHUB_TOKEN: ${{ secrets.CI_CD }}
         

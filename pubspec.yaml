@@ -12,13 +12,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   cupertino_icons: ^1.0.8
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+
+flutter_launcher_icons:
+  macos:
+    generate: true
+    image_path: "assets/icon/picker_wheel.png"
 
 flutter:
   uses-material-design: true

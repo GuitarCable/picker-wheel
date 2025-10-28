@@ -1,0 +1,27 @@
+name: Auto Release
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  MAJ_VER: 0
+  MIN_VER: 1
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.MAJ_VER }}.${{ env.MIN_VER }}.${{ github.run_number }}
+          name: Release v${{ env.MAJ_VER }}.${{ env.MIN_VER }}.${{ github.run_number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.CI_CD }}

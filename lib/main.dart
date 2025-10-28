@@ -48,7 +48,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
 
   double _finalAngle = 0;
 
-  final List<String> labels = ['bill', 'yur mom', 'amongus', 'Longer name', 'bob'];
+  final List<String> labels = [];
 
   int _getSelectedIndex(double angle) {
     final normalized = angle % (2 * pi);
@@ -105,7 +105,10 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
           content: Text('🎉 $winner won!'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                labels.remove(winner);
+                Navigator.pop(context);
+              },
               child: Text('OK'),
             ),
           ],
@@ -122,8 +125,8 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Stack (
-      alignment: Alignment.center,
+    return Row (
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Padding (
           padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.07),
@@ -156,6 +159,10 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
             )
           ),
         ),
+        Align (
+          alignment: Alignment.topRight,
+          child: DynamicListExample(labels)
+        )
       ],
     );
   }
@@ -189,6 +196,26 @@ class WedgeCirclePainter extends CustomPainter {
     final anglePerWedge = 2 * pi / labels.length;
     final paint = Paint()..style = PaintingStyle.fill;
 
+    if(labels.isEmpty) {
+      paint.color = Colors.grey;
+      final startAngle = 0 * anglePerWedge;
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        anglePerWedge,
+        true,
+        paint,
+      );
+      canvas.drawCircle(
+        center,
+        radius,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..color = Colors.black
+          ..strokeWidth = lengthWidth * 0.01,
+      );
+    }
     for (int i = 0; i < labels.length; i++) {
       paint.color = Colors.primaries[i % Colors.primaries.length];
       final startAngle = i * anglePerWedge;
@@ -344,4 +371,94 @@ class TickerButton extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class DynamicListExample extends StatefulWidget {
+  final List<String> items;
+  DynamicListExample(this.items);
+  @override
+  _DynamicListExampleState createState() => _DynamicListExampleState(items);
+}
+
+class _DynamicListExampleState extends State<DynamicListExample> {
+  List<String> items;
+  _DynamicListExampleState(this.items);
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+
+  void _addItem(String name) {
+    setState(() {
+      items.add('$name');
+    });
+  }
+
+  void _removeItem(int index) {
+    setState(() {
+      items.removeAt(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack (
+      children: [
+        Container(
+          alignment: Alignment.centerRight,
+          margin: EdgeInsets.all(16),
+          padding: EdgeInsets.all(12),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height,
+            maxWidth: MediaQuery.of(context).size.width / 2,
+            minHeight: MediaQuery.of(context).size.height,
+            minWidth: MediaQuery.of(context).size.width / 2
+          ),
+          decoration: BoxDecoration(
+            color: Colors.grey[200], // Background color
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column (
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: items.length,
+                  itemBuilder: (context, index) => ListTile(
+                    title: Text(items[index]),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () => _removeItem(index),
+                    ),
+                  ),
+                ),
+              ),
+              TextField(
+                controller: _controller,
+                focusNode: _focusNode,
+                decoration: InputDecoration(
+                  labelText: 'Enter a name',
+                  labelStyle: TextStyle(
+                    color: Colors.grey,
+                    fontFamily: 'Comic Sans'
+                  ),
+                  border: OutlineInputBorder(),
+                ),
+                onSubmitted: (value) {
+                  _addItem(value);
+                  _controller.clear();
+                  _focusNode.requestFocus();
+                },
+              )
+            ]
+          )
+        )
+      ]
+    );
+  }
 }

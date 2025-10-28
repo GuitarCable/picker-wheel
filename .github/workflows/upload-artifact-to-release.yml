@@ -18,8 +18,10 @@ jobs:
       - name: Setup Flutter SDK
         uses: flutter-actions/setup-flutter@v4
         with:
-          channel: stable # Specify the Flutter release channel (e.g., stable, beta, master)
-          version: '3.19.0'
+          channel: stable
+          version: '3.35.7'
+          cache: true
+          cache-sdk: true
       - name: Install dependencies
         run: flutter pub get
       # - name: Run tests (optional)

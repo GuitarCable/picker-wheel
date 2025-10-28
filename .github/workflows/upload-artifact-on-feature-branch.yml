@@ -1,4 +1,4 @@
-name: Artifact Release Upload
+name: Feature Build
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
         uses: flutter-actions/setup-flutter@v4
         with:
           channel: stable
-          version: '3.19.0'
+          version: '3.35.7'
           cache: true
           cache-sdk: true
       - name: Install dependencies

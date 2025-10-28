@@ -30,7 +30,8 @@ jobs:
       - name: Build App
         run: |
             flutter build macos --release
-            zip picker_wheel_macos_intel.zip ./build/macos/Build/Products/Release/picker_wheel.app
+            cp build/macos/Build/Products/Release/picker_wheel.app picker_wheel.app
+            zip -r picker_wheel_macos_intel.zip build/macos/Build/Products/Release/picker_wheel.app
       - uses: actions/upload-artifact@v4
         with:
           path: picker_wheel_macos_intel.zip

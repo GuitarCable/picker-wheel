@@ -1,0 +1,38 @@
+name: Artifact Release Upload
+
+on:
+  release:
+    types: [created]
+
+env:
+  APP_NAME: picker_wheel
+  MAIN_LOCATION: bin/dart.dart
+
+jobs:
+  build-macos:
+    permissions:
+      contents: write
+    runs-on: macos-15-intel
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.19.0
+      - name: Install dependencies
+        run: flutter pub get
+      # - name: Run tests (optional)
+      #   run: flutter test
+      - name: Build App
+        run: |
+            flutter build macos --release
+            zip picker_wheel_macos_intel.zip ./build/macos/Build/Products/Release/picker_wheel.app
+      - name: Upload artifact
+        uses: softprops/action-gh-release@v1
+        with:
+          files: picker_wheel_macos_intel.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.CI_CD }}
+        

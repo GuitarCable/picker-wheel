@@ -6,7 +6,6 @@ on:
 
 env:
   APP_NAME: picker_wheel
-  MAIN_LOCATION: bin/dart.dart
 
 jobs:
   build-macos:

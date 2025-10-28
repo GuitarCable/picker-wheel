@@ -60,8 +60,8 @@ jobs:
         run: |
             flutter build windows --release
             mkdir picker_wheel_windows
-            copy "build\windows\x64\runner\Release\picker_wheel.exe" picker_wheel_windows
-            Compress-Archive -Path "picker_wheel_windows\" -DestinationPath "picker_wheel_windows.zip"
+            xcopy /E /I /Y "build\windows\x64\runner\Release" picker_wheel_windows
+            Compress-Archive -Path "picker_wheel_windows" -DestinationPath "picker_wheel_windows.zip"
       - name: Upload artifact
         uses: softprops/action-gh-release@v1
         with:

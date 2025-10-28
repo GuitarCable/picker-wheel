@@ -16,11 +16,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+      - name: Setup Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
         with:
-          channel: stable
-          flutter-version: 3.19.0
+          channel: stable # Specify the Flutter release channel (e.g., stable, beta, master)
+          version: '3.19.0'
       - name: Install dependencies
         run: flutter pub get
       # - name: Run tests (optional)
